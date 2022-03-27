@@ -1,8 +1,7 @@
 import io.qameta.allure.junit4.DisplayName;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Locale;
 
 import static org.junit.Assert.*;
 
@@ -15,11 +14,19 @@ public class UserLoginTests {
         requests=new Requests();
     }
 
+    @After
+    public void tearDown(){
+        requests.requestDelete(Tokens.getAccessToken());
+    }
     @DisplayName("Test login user")
     @Test
     public void testLoginUser(){
         user=User.getRandomUser();
-        int crateUser = requests.requestCreateUser(user).extract().statusCode();
+        String crateUser = requests.requestCreateUser(user).extract().path("accessToken");
+
+        StringBuilder formatToken = new StringBuilder(crateUser);
+        Tokens.setAccessToken(formatToken.delete(0, 7).toString());
+
         int statusCodeLoginUser = requests.requestLogin(user).extract().statusCode();
         boolean success = requests.requestLogin(user).extract().path("success");
 
@@ -31,7 +38,12 @@ public class UserLoginTests {
     public void testLoginWithWrongUserName(){
         user= User.getRandomUser();
         User incorrectLogin= new User(user.email, user.password, "123");
-        String crateUser = requests.requestCreateUser(user).extract().path("email");
+
+        String crateUser = requests.requestCreateUser(user).extract().path("accessToken");
+
+        StringBuilder formatToken = new StringBuilder(crateUser);
+        Tokens.setAccessToken(formatToken.delete(0, 7).toString());
+
         int statusCodeLoginUser = requests.requestLogin(incorrectLogin).extract().statusCode();
         boolean success = requests.requestLogin(incorrectLogin).extract().path("success");
 
@@ -43,7 +55,12 @@ public class UserLoginTests {
     public void testLoginWithWrongPassword(){
         user= User.getRandomUser();
         User incorrectLogin= new User(user.email, "123", user.name);
-        String crateUser = requests.requestCreateUser(user).extract().path("email");
+
+        String crateUser = requests.requestCreateUser(user).extract().path("accessToken");
+
+        StringBuilder formatToken = new StringBuilder(crateUser);
+        Tokens.setAccessToken(formatToken.delete(0, 7).toString());
+
         int statusCodeLoginUser = requests.requestLogin(incorrectLogin).extract().statusCode();
         boolean success = requests.requestLogin(incorrectLogin).extract().path("success");
 

@@ -5,7 +5,7 @@ import static io.restassured.http.ContentType.JSON;
 
 public class BaseSpec {
     public static final String BASE_URL= "https://stellarburgers.nomoreparties.site";
-    protected RequestSpecification getBaseSpec(){
+    protected static RequestSpecification getBaseSpec(){
         return new RequestSpecBuilder()
                 .setContentType(JSON)
                 .setBaseUri(BASE_URL)

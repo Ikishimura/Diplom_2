@@ -85,4 +85,18 @@ public class Requests extends BaseSpec{
                 log().
                 all();
     }
+    @Step
+    public ValidatableResponse requestDelete(String token) {
+        return given()
+                .spec(getBaseSpec())
+                .auth().oauth2(token)
+                .when()
+                .log()
+                .all()
+                .delete(api+"auth/user")
+                .then()
+                .log()
+                .all()
+                .statusCode(202);
+    }
 }

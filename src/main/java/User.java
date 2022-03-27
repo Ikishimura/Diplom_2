@@ -22,6 +22,18 @@ public class User {
         return this.name;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     public static User getRandomUser (){
         final String email = RandomStringUtils.randomAlphabetic(10) + "@mail.ru";
         final String password = RandomStringUtils.randomAlphabetic(10);

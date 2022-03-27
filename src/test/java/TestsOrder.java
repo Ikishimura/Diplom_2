@@ -32,15 +32,14 @@ public class TestsOrder {
         String crateUser =requests.requestCreateUser(user).extract().path("accessToken");
 
         StringBuilder formatToken = new StringBuilder(crateUser);
-        formatToken.delete(0, 7);
+        Tokens.setAccessToken(formatToken.delete(0, 7).toString());
 
-        String token = formatToken.toString();
-
-        boolean success = requests.requestCreateOrderWithAuthorisation(ingredients,token).extract().path("success");
-        int statusCode = requests.requestCreateOrderWithAuthorisation(ingredients,token).extract().statusCode();
+        boolean success = requests.requestCreateOrderWithAuthorisation(ingredients,Tokens.getAccessToken()).extract().path("success");
+        int statusCode = requests.requestCreateOrderWithAuthorisation(ingredients,Tokens.getAccessToken()).extract().statusCode();
 
         assertTrue(success);
         assertEquals(200,statusCode);
+        requests.requestDelete(Tokens.getAccessToken());
     }
     @DisplayName("Create order without ingredients")
     @Test

@@ -50,6 +50,21 @@ public class TestsOrder {
         assertFalse(success);
         assertEquals(400,statusCode);
     }
+    @DisplayName("Create order with ingredients")
+    @Test
+    public void createOrderWithIngredients(){
+        String crateUser =requests.requestCreateUser(user).extract().path("accessToken");
+
+        StringBuilder formatToken = new StringBuilder(crateUser);
+        Tokens.setAccessToken(formatToken.delete(0, 7).toString());
+
+        boolean success = requests.requestCreateOrderWithAuthorisation(ingredients,Tokens.getAccessToken()).extract().path("success");
+        int statusCode = requests.requestCreateOrderWithAuthorisation(ingredients,Tokens.getAccessToken()).extract().statusCode();
+
+        assertEquals(200,statusCode);
+        assertTrue(success);
+        requests.requestDelete(Tokens.getAccessToken());
+    }
     @DisplayName("Create order with not valid hash")
     @Test
     public void createOrderWithNotValidHash(){
@@ -58,5 +73,32 @@ public class TestsOrder {
         int statusCode = requests.requestCreateOrderWithoutAuthorisation(ingredientsNotValidHash).extract().statusCode();
 
         assertEquals(500,statusCode);
+    }
+    @DisplayName("Get orders authorise user")
+    @Test
+    public void getOrdersAuthoriseUser(){
+        String crateUser =requests.requestCreateUser(user).extract().path("accessToken");
+
+        StringBuilder formatToken = new StringBuilder(crateUser);
+        Tokens.setAccessToken(formatToken.delete(0, 7).toString());
+
+        requests.requestCreateOrderWithAuthorisation(ingredients,Tokens.getAccessToken()).statusCode(200);
+
+        boolean success = requests.requestGetOrderWithAuthorisation(Tokens.getAccessToken()).extract().path("success");
+        List<String> orders = requests.requestGetOrderWithAuthorisation(Tokens.getAccessToken()).extract().path("orders");
+
+        assertTrue(success);
+        assertFalse(orders.isEmpty());
+        requests.requestDelete(Tokens.getAccessToken());
+    }
+    @DisplayName("Get orders without authorisation")
+    @Test
+    public void getOrdersWithoutAuthorisation() {
+
+        boolean success = requests.requestGetOrderWithoutAuthorisation().extract().path("success");
+        String message = requests.requestGetOrderWithoutAuthorisation().extract().path("message");
+
+        assertFalse(success);
+        assertEquals("You should be authorised", message);
     }
 }

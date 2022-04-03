@@ -99,4 +99,25 @@ public class Requests extends BaseSpec{
                 .all()
                 .statusCode(202);
     }
+    @Step
+    public ValidatableResponse requestGetOrderWithAuthorisation(String token){
+        return given().
+                spec(getBaseSpec()).
+                auth().oauth2(token).
+                when().
+                log().all().
+                get(api + "orders").
+                then().
+                log().all();
+    }
+    @Step
+    public ValidatableResponse requestGetOrderWithoutAuthorisation(){
+        return given().
+                spec(getBaseSpec()).
+                when().
+                log().all().
+                get(api + "orders").
+                then().
+                log().all();
+    }
 }

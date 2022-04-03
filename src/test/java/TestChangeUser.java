@@ -43,7 +43,9 @@ public class TestChangeUser {
 
         int statusCode=requests.requestChangeUser(changeUserFields,"").extract().statusCode();
         boolean success = requests.requestChangeUser(changeUserFields,"").extract().path("success");
+        String message = requests.requestChangeUser(changeUserFields,"").extract().path("message");
         assertEquals(401,statusCode);
         assertFalse(success);
+        assertEquals("You should be authorised",message);
     }
 }
